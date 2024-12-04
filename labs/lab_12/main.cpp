@@ -7,37 +7,47 @@ int main() {
     arr.add(10);
     assert(arr.getSize() == 1);
     assert(arr[0] == 10);
-    std::cout << "Added element: " << arr[0] << ", Size: " << arr.getSize() << ", Capacity: " << arr.getCapacity() << std::endl;
 
     // Test constructor with capacity
     DynamicArray<int> arrWithCapacity(2);
     arrWithCapacity.add(20);
     arrWithCapacity.add(30);
-    std::cout << "Added elements: " << arrWithCapacity[0] << ", " << arrWithCapacity[1] << ", Size: " << arrWithCapacity.getSize() << ", Capacity: " << arrWithCapacity.getCapacity() << std::endl;
+    assert(arrWithCapacity[0] == 20);
+    assert(arrWithCapacity[1] == 30);
 
     // Test resizing
     arrWithCapacity.add(40); // This should trigger resizing
-    std::cout << "After adding one more element: " << arrWithCapacity[2] << ", Size: " << arrWithCapacity.getSize() << ", Capacity: " << arrWithCapacity.getCapacity() << std::endl;
+    assert(arrWithCapacity.getCapacity() == 4);
 
     // Test copy constructor
     DynamicArray<int> copyArr = arrWithCapacity;
-    std::cout << "Copy constructor: " << copyArr[0] << ", " << copyArr[1] << ", " << copyArr[2] << ", Size: " << copyArr.getSize() << ", Capacity: " << copyArr.getCapacity() << std::endl;
+    assert(copyArr.getSize() == arrWithCapacity.getSize());
+    assert(copyArr.getCapacity() == arrWithCapacity.getCapacity());
+    for(size_t i = 0; i < copyArr.getSize(); i++)
+        assert(copyArr[i] == arrWithCapacity[i]);
+
 
     // Test move constructor
     DynamicArray<int> movedArr = std::move(arrWithCapacity);
-    std::cout << "Move constructor: " << movedArr[0] << ", " << movedArr[1] << ", " << movedArr[2] << ", Size: " << movedArr.getSize() << ", Capacity: " << movedArr.getCapacity() << std::endl;
+    assert(movedArr.getSize() == 3);
+    assert(movedArr.getCapacity() == 4);
+    assert(movedArr[0] == 20);
+    assert(movedArr[1] == 30);
+    assert(movedArr[2] == 40);
 
     // Test assignment operator
     DynamicArray<int> assignedArr;
     assignedArr = copyArr;
-    std::cout << "After assignment: " << assignedArr[0] << ", " << assignedArr[1] << ", " << assignedArr[2] << ", Size: " << assignedArr.getSize() << ", Capacity: " << assignedArr.getCapacity() << std::endl;
+    assert(assignedArr.getSize() == copyArr.getSize());
+    assert(assignedArr.getCapacity() == copyArr.getCapacity());
+    for(size_t i = 0; i < assignedArr.getSize(); i++)
+        assert(assignedArr[i] == copyArr[i]);
 
     // Test span method
     std::span<int> span = copyArr.getCurrentSpan();
-    std::cout << "Span size: " << span.size() << ", Elements: ";
+    assert(span.size() == copyArr.getSize());
     for (size_t i = 0; i < span.size(); ++i)
-        std::cout << span[i] << " ";
-    std::cout << std::endl;
+        assert(span[i] == copyArr[i]);
 
     // Clean up is automatic due to the destructor
     return 0;

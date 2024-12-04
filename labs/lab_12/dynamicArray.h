@@ -81,7 +81,7 @@ public:
     }
 
     std::span<T> getCurrentSpan() const {
-        return std::span<T>(buffer, length);
+        return {buffer, length};
     }
 
 private:

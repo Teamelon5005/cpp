@@ -1,3 +1,4 @@
+#include <array>
 struct Leg
 {
     int length;
@@ -8,7 +9,7 @@ struct Arm
     int power;
 };
 
-struct Person
+class Person
 {
     std::array<Leg, 2> legs;
     Arm arms[2];
@@ -16,7 +17,10 @@ struct Person
 
 int main()
 {
-    Person person;
+    Person personA;
+    Person personB;
+
+    personB = personA;
 }
 
 /*

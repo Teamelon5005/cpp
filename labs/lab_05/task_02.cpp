@@ -2,24 +2,35 @@
 #include <string_view>
 #include <cassert>
 
+size_t findSpace(std::string_view string)
+{
+    for(size_t i = 0; i < string.length(); i++)
+    {
+        if (string[i] == ' ')
+        {
+            return i;
+        }
+    }
+    return size_t(-1);
+}
+
 std::string_view secondWord(std::string_view str)
 {
-    size_t firstSpacePos = str.find(' ');
+    {
+        size_t index = findSpace(str);
+        if(index == size_t(-1))
+            return "";
+        str = str.substr(index + 1);
+    }
 
-    if (firstSpacePos == std::string_view::npos)
-        return "";
+    {
+        size_t index = findSpace(str);
+        if(index == size_t(-1))
+            return "";
+        str = {&str[0], index};
+    }
 
-    size_t secondWordStart = str.find_first_not_of(' ', firstSpacePos);
-
-    if (secondWordStart == std::string_view::npos)
-        return "";
-
-    size_t nextSpacePos = str.find(' ', secondWordStart);
-
-    if (nextSpacePos == std::string_view::npos)
-        return str.substr(secondWordStart);
-
-    return str.substr(secondWordStart, nextSpacePos - secondWordStart);
+    return str;
 }
 
 int main()
@@ -36,7 +47,9 @@ int main()
 
     assert(secondWord("a  ") == "");
 
-    assert(secondWord("a  b") == ""); // It looks like this example return false. I dunno if it was intended but from my humble perspective this string should return something like "b" | assert(secondWord("a  b") == "b")
+    assert(secondWord("a  b") == "");
+
+    assert(secondWord("hello     world    dear") == "");
 
     std::cout << "All tests passed successfully!" << std::endl;
     return 0;

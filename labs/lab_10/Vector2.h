@@ -1,5 +1,4 @@
-#ifndef VECTOR2_H
-#define VECTOR2_H
+#pragma once
 
 #include <iostream>
 
@@ -24,5 +23,3 @@ Vector2 operator*(float scalar, const Vector2& vec);
 Vector2 operator/(const Vector2& vec, float scalar);
 
 std::ostream& operator<<(std::ostream& os, const Vector2& vec);
-
-#endif

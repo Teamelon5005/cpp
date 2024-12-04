@@ -5,14 +5,21 @@
 enum class Portrait { Lenin, Washington, Hitler };
 enum class LightBulbColor { Blue, White, Red };
 enum class Wire { Red, Yellow, Green };
-bool switchState = 1;
+
+struct Bomb { Portrait portrait; LightBulbColor lightBulbColor; bool switchState; int dialValue; };
 
 int getColorValue(LightBulbColor color, Portrait portrait) {
-    switch (color) {
-    case LightBulbColor::Blue:  return portrait == Portrait::Hitler ? 15 : 11;
-    case LightBulbColor::White: return portrait == Portrait::Hitler ? 35 : 15;
-    case LightBulbColor::Red:   return portrait == Portrait::Hitler ? 11 : 35;
+    int totalColors = 3;
+    if (portrait == Portrait::Hitler) {
+        color = static_cast<LightBulbColor>((static_cast<int>(color) + 1 + totalColors) % totalColors);
     }
+
+    switch (color) {
+    case LightBulbColor::Blue:  return 11;
+    case LightBulbColor::White: return 15;
+    case LightBulbColor::Red:   return 35;
+    }
+
     return -1;
 }
 
@@ -30,44 +37,44 @@ std::string wireToString(Wire wire) {
     return "";
 }
 
-std::string determineWireToCut(Portrait portrait, LightBulbColor bulbColor, bool toggleSwitch, int dialValue) {
-    if (portrait == Portrait::Lenin) {
-        return "Do not cut any wire";
+Wire determineWireToCut(Bomb bomb) {
+    if (bomb.portrait == Portrait::Lenin) {
+        return static_cast<Wire>(-1);
     }
 
-    int colorValue = getColorValue(bulbColor, portrait);
+    int colorValue = getColorValue(bomb.lightBulbColor, bomb.portrait);
     Wire wireToCut;
 
-    if (dialValue < colorValue) {
+    if (bomb.dialValue < colorValue) {
         wireToCut = Wire::Red;
     }
-    else if (dialValue == colorValue) {
+    else if (bomb.dialValue == colorValue) {
         wireToCut = Wire::Green;
     }
     else {
         wireToCut = Wire::Yellow;
     }
 
-    if (toggleSwitch) {
+    if (bomb.switchState) {
         wireToCut = shiftWire(wireToCut, -1);
     }
 
-    if (dialValue % 4 == 0) {
-        wireToCut = shiftWire(wireToCut, dialValue / 4);
+    if (bomb.dialValue % 4 == 0) {
+        wireToCut = shiftWire(wireToCut, bomb.dialValue / 4);
     }
 
-    return "Cut the " + wireToString(wireToCut) + " wire";
+    return wireToCut;
 }
 
 int main() {
-    assert(determineWireToCut(Portrait::Lenin, LightBulbColor::Blue, !switchState, 10) == "Do not cut any wire");
-    assert(determineWireToCut(Portrait::Washington, LightBulbColor::Blue, !switchState, 10) == "Cut the Red wire");
-    assert(determineWireToCut(Portrait::Hitler, LightBulbColor::White, !switchState, 35) == "Cut the Green wire");
-    assert(determineWireToCut(Portrait::Hitler, LightBulbColor::Red, switchState, 28) == "Cut the Yellow wire");
-    assert(determineWireToCut(Portrait::Washington, LightBulbColor::Blue, !switchState, 8) == "Cut the Green wire");
+    assert(determineWireToCut(Bomb{ Portrait::Lenin, LightBulbColor::Blue, false, 10 }) == static_cast<Wire>(-1));
+    assert(determineWireToCut(Bomb{ Portrait::Washington, LightBulbColor::Blue, false, 10 }) == Wire::Red);
+    assert(determineWireToCut(Bomb{ Portrait::Hitler, LightBulbColor::White, false, 35 }) == Wire::Green);
+    assert(determineWireToCut(Bomb{ Portrait::Hitler, LightBulbColor::Red, true, 28 }) == Wire::Yellow);
+    assert(determineWireToCut(Bomb{ Portrait::Washington, LightBulbColor::Blue, false, 8 }) == Wire::Green);
 
     std::cout << "All test cases passed!" << std::endl;
-    
+
     int portraitInput, bulbColorInput, switchInput, dialInput;
     std::cout << "Enter portrait (0: Lenin, 1: Washington, 2: Hitler): ";
     std::cin >> portraitInput;
@@ -78,7 +85,10 @@ int main() {
     std::cout << "Enter dial value (1-100): ";
     std::cin >> dialInput;
 
-    std::cout << determineWireToCut(static_cast<Portrait>(portraitInput), static_cast<LightBulbColor>(bulbColorInput), static_cast<bool>(switchInput), dialInput) << std::endl;
+    if (portraitInput == 0)
+        std::cout << "Do not cut any wire" << std::endl;
+    else
+        std::cout << "Cut the " + wireToString(determineWireToCut(Bomb{ static_cast<Portrait>(portraitInput), static_cast<LightBulbColor>(bulbColorInput), static_cast<bool>(switchInput), dialInput })) + " wire" << std::endl;
 
     return 0;
 }

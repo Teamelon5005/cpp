@@ -1,7 +1,25 @@
 #include <iostream>
 
+void f()
+{
+    int a = 6; // 301
+    std::cout << a;
+}
+
+void g()
+{
+    int b; // 302
+    std::cout << b;
+}
+
 int main() {
-    int i = 69;
+
+    // stack
+    f();
+    g();
+
+    int i;
+    i = 69;
 
     int number = 72;
 

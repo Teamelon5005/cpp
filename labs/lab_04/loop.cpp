@@ -37,12 +37,26 @@ void product_for(std::span<int> inputOutput, std::span<int> coefficients)
         inputOutput[i] *= coefficients[i];
 }
 
+
+void printArray(int* arrayStart, size_t len)
+{
+    for (size_t i = 0; i < len; i++)
+    {
+        int* elementAddress = arrayStart + i;
+        int element = *elementAddress;
+        std::cout << element << ", ";
+    }
+    std::cout << std::endl;
+}
+
 int main()
 {
-    int inputOutputArr[] = { 1, 2, 3, 4 };
-    int coefficientsArr[] = { 10, 20, 30, 40 };
+    std::array<int, 4> inputOutputArr{ 1, 2, 3, 4 };
+    std::array coefficientsArr{ 10, 20, 30, 40 };
 
-    std::span<int> inputOutput(inputOutputArr);
+    std::span<int> inputOutput{&inputOutputArr[0], inputOutputArr.size()};
+    inputOutput = inputOutput.subspan(2, 1);
+
     std::span<int> coefficients(coefficientsArr);
 
     for (const auto& elem : inputOutput)
